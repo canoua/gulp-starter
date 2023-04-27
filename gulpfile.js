@@ -14,6 +14,10 @@ const concat = require('gulp-concat');
 const autoPrefixer = require('gulp-autoprefixer');
 //очистка папки с билдом
 const clean = require('gulp-clean');
+//возможность импортировать компоненты
+const include = require('gulp-file-include')
+//
+const sync = require('browser-sync').create()
 //конвертация шрифтов
 const fonter = require('gulp-fonter-unx');
 const ttf2woff2 = require('gulp-ttf2woff2');
@@ -22,6 +26,9 @@ const ttf2woff2 = require('gulp-ttf2woff2');
 
 function html() {
   return src('src/**.html')
+    .pipe(include({
+      prefix: '@@'
+    }))  
     .pipe(htmlmin({
       collapseWhitespace: true
     }))
@@ -67,12 +74,27 @@ function fontsWoff2() {
     .pipe(dest('src/static/fonts'))
 }
 
+function serve() {
+  sync.init({
+    server:'build'
+  })
+
+  watch('src/**.html', series(html)).on('change', sync.reload)
+  watch('src/scripts/**.js', series(scripts)).on('change', sync.reload)
+  watch('src/styles/**.scss', series(styles)).on('change', sync.reload)
+}
+
 
 //перед работой сконвертировать шрифты
 exports.fonts = fonts
 exports.fontsWoff2 = fontsWoff2
+
 //для тестов
 exports.images = images
 exports.cleanBuild = cleanBuild
+
 //build
 exports.build = series(parallel(html,images, styles, scripts))
+
+//serve
+exports.serve = serve
