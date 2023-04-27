@@ -1,5 +1,6 @@
-//не требует установки
+//не требуют установки
 const { src, dest, parallel, series, watch } = require('gulp');
+//***
 const htmlmin = require('gulp-htmlmin');
 const sass = require('gulp-sass')(require('sass'));
 const csso = require('gulp-csso');
@@ -32,13 +33,21 @@ function styles() {
     .pipe(dest('build/styles/'))
 }
 
+function images() {
+  return src('src/static/images/*')
+    .pipe(dest('build/images'))
+}
+
 function cleanBuild() {
   return src('build')
     .pipe(clean())
 }
 
-// exports.js = js
-// exports.cleanBuild = cleanBuild
-exports.html = html
-exports.styles = styles
-exports.build = series(cleanBuild, parallel(styles, scripts))
+function images() {
+  return src('src/static/images/*')
+    .pipe(dest('build/images'))
+}
+
+exports.images = images
+exports.cleanBuild = cleanBuild
+exports.build = series(cleanBuild, parallel(html,images, styles, scripts))
