@@ -18,6 +18,8 @@ const clean = require('gulp-clean');
 const fonter = require('gulp-fonter-unx');
 const ttf2woff2 = require('gulp-ttf2woff2');
 
+
+
 function html() {
   return src('src/**.html')
     .pipe(htmlmin({
@@ -35,7 +37,7 @@ function scripts() {
 
 function styles() {
   return src('src/styles/*.scss')
-    .pipe(concat('style.gulpcss'))
+    .pipe(concat('style.min.css'))
     .pipe(autoPrefixer(['last 2 versions']))
     .pipe(sass().on('error', sass.logError))
     .pipe(csso())
@@ -43,8 +45,8 @@ function styles() {
 }
 
 function images() {
-  return src('src/static/images/*')
-    .pipe(dest('build/images'))
+  return src('src/images/*')
+    .pipe(dest('build/static/images'))
 }
 
 function cleanBuild() {
@@ -52,31 +54,25 @@ function cleanBuild() {
     .pipe(clean())
 }
 
-function images() {
-  return src('src/static/images/*')
-    .pipe(dest('build/images'))
-}
-
 function fonts() {
   return src('src/static/fonts/*')
     .pipe(fonter({
       formats: ['woff', 'ttf', 'eot']
     }))
-    .pipe(dest('build/fonts'))
+    .pipe(dest('src/static/fonts'))
 }
-
-function fonts2() {
+function fontsWoff2() {
   return src('src/static/fonts/*')
     .pipe(ttf2woff2())
-    .pipe(dest('build/fonts'))
+    .pipe(dest('src/static/fonts'))
 }
 
 
 //перед работой сконвертировать шрифты
 exports.fonts = fonts
-exports.fonts2 = fonts2
+exports.fontsWoff2 = fontsWoff2
 //для тестов
 exports.images = images
 exports.cleanBuild = cleanBuild
 //build
-exports.build = series(cleanBuild, parallel(html,images, styles, scripts))
+exports.build = series(parallel(html,images, styles, scripts))
