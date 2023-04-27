@@ -16,8 +16,10 @@
     "gulp-clean-css": "^4.3.0",
     "gulp-concat": "^2.6.1",
     "gulp-csso": "^4.0.1",
+    "gulp-fonter-unx": "^0.3.0",
     "gulp-htmlmin": "^5.0.1",
     "gulp-sass": "^5.1.0",
+    "gulp-ttf2woff2": "^4.0.1",
     "gulp-uglify-es": "^3.0.0",
     "sass": "^1.62.1"
   }
