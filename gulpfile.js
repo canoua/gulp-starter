@@ -16,12 +16,13 @@ const autoPrefixer = require('gulp-autoprefixer');
 const clean = require('gulp-clean');
 //возможность импортировать компоненты
 const include = require('gulp-file-include')
+//imagemin 7.1.0 - стабильная версия
+const imagemin = require('gulp-imagemin')
 //
 const sync = require('browser-sync').create()
 //конвертация шрифтов
 const fonter = require('gulp-fonter-unx');
 const ttf2woff2 = require('gulp-ttf2woff2');
-
 
 
 function html() {
@@ -51,8 +52,9 @@ function styles() {
     .pipe(dest('build/styles/'))
 }
 
-function images() {
+function imageminification() {
   return src('src/images/*')
+    .pipe(imagemin())
     .pipe(dest('build/static/images'))
 }
 
@@ -90,11 +92,11 @@ exports.fonts = fonts
 exports.fontsWoff2 = fontsWoff2
 
 //для тестов
-exports.images = images
 exports.cleanBuild = cleanBuild
+exports.imageminification = imageminification
 
 //build
-exports.build = series(parallel(html,images, styles, scripts))
+exports.build = series(parallel(html, imageminification, styles, scripts))
 
 //serve
 exports.serve = serve
