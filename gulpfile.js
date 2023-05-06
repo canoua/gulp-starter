@@ -45,7 +45,7 @@ function scripts() {
 
 function styles() {
   return src('src/styles/*.scss')
-    .pipe(concat('style.min.css'))
+    .pipe(concat('style.css'))
     .pipe(autoPrefixer(['last 2 versions']))
     .pipe(sass().on('error', sass.logError))
     .pipe(csso())
@@ -55,7 +55,7 @@ function styles() {
 function imageminification() {
   return src('src/images/*')
     .pipe(imagemin())
-    .pipe(dest('build/static/images'))
+    .pipe(dest('build/images'))
 }
 
 function cleanBuild() {
@@ -64,39 +64,53 @@ function cleanBuild() {
 }
 
 function fonts() {
-  return src('src/static/fonts/*')
+  return src('src/fonts/*')
     .pipe(fonter({
       formats: ['woff', 'ttf', 'eot']
     }))
-    .pipe(dest('src/static/fonts'))
+    .pipe(dest('src/fonts'))
+    .pipe(dest('build/fonts'))
 }
 function fontsWoff2() {
-  return src('src/static/fonts/*')
+  return src('src/fonts/*')
     .pipe(ttf2woff2())
-    .pipe(dest('src/static/fonts'))
+    .pipe(dest('src/fonts'))
+    .pipe(dest('build/fonts'))
+}
+
+function buildFonts() {
+  return src('src/fonts/*')
+    .pipe(fonter({
+      formats: ['woff', 'ttf', 'eot']
+    }))
+    .pipe(ttf2woff2())
+    .pipe(dest('build/fonts'))
 }
 
 function serve() {
   sync.init({
-    server:'build'
+    server:{
+      baseDir:'./build'
+    },
+    notify: false
   })
-
   watch('src/**.html', series(html)).on('change', sync.reload)
   watch('src/scripts/**.js', series(scripts)).on('change', sync.reload)
   watch('src/styles/**.scss', series(styles)).on('change', sync.reload)
+  watch('src/images/*', series(imageminification)).on('change', sync.reload)
 }
-
 
 //перед работой сконвертировать шрифты
 exports.fonts = fonts
 exports.fontsWoff2 = fontsWoff2
+exports.buildFonts = buildFonts
 
 //для тестов
 exports.cleanBuild = cleanBuild
 exports.imageminification = imageminification
 
 //build
-exports.build = series(parallel(html, imageminification, styles, scripts))
+exports.build = parallel(buildFonts, html, imageminification, styles, scripts)
 
 //serve
 exports.serve = serve
