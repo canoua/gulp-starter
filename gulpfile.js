@@ -110,7 +110,7 @@ exports.cleanBuild = cleanBuild
 exports.imageminification = imageminification
 
 //build
-exports.build = parallel(buildFonts, html, imageminification, styles, scripts)
+exports.build = parallel(fonts, buildFonts, html, imageminification, styles, scripts)
 
 //serve
 exports.serve = serve
